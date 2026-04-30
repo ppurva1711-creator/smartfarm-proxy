@@ -1,6 +1,8 @@
 const express = require("express");
 const axios = require("axios");
 
+app.use(express.json({ limit: "1mb" }));
+
 const app = express();
 app.use(express.json());
 
@@ -23,7 +25,11 @@ app.get("/motor", async(req, res) => {
 
         res.json(response.data);
     } catch (err) {
-        console.error("GET ERROR:", err.message);
+        if (err.response && err.response.data) {
+            console.error("FULL ERROR:", err.response.data);
+        } else {
+            console.error("FULL ERROR:", err.message);
+        }
         res.status(500).json({ error: "Proxy error" });
     }
 });
@@ -44,12 +50,16 @@ app.post("/motor", async(req, res) => {
         );
 
         res.json(response.data);
+
     } catch (err) {
-        console.error("POST ERROR:", err.message);
+        if (err.response && err.response.data) {
+            console.error("FULL ERROR:", err.response.data);
+        } else {
+            console.error("FULL ERROR:", err.message);
+        }
         res.status(500).json({ error: "Proxy error" });
     }
 });
-
 // =====================
 // SENSOR
 // =====================
@@ -67,7 +77,11 @@ app.post("/sensor", async(req, res) => {
 
         res.json(response.data);
     } catch (err) {
-        console.error("SENSOR ERROR:", err.message);
+        if (err.response && err.response.data) {
+            console.error("FULL ERROR:", err.response.data);
+        } else {
+            console.error("FULL ERROR:", err.message);
+        }
         res.status(500).json({ error: "Proxy error" });
     }
 });
