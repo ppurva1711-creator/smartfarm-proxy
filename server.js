@@ -3,10 +3,13 @@ const app = express();
 
 app.use(express.json());
 
-const PORT = 3000;
+// ✅ IMPORTANT: Railway dynamic port
+const PORT = process.env.PORT || 3000;
 
-// 🔥 GLOBAL STATE (temporary)
-let pumpState = "OFF";
+// ---------------- STATE ----------------
+let pumpState = false; // use boolean (better for ESP32)
+
+// ---------------- ROUTES ----------------
 
 // Test route
 app.get("/", (req, res) => {
@@ -15,23 +18,32 @@ app.get("/", (req, res) => {
 
 // Turn ON
 app.post("/pump/on", (req, res) => {
-    pumpState = "ON";
+    pumpState = true;
     console.log("Pump ON requested");
-    res.json({ status: "Pump turned ON" });
+    res.json({ status: "ON" });
 });
 
 // Turn OFF
 app.post("/pump/off", (req, res) => {
-    pumpState = "OFF";
+    pumpState = false;
     console.log("Pump OFF requested");
-    res.json({ status: "Pump turned OFF" });
+    res.json({ status: "OFF" });
 });
 
-// 🔥 ESP32 will call this
+// ESP32 reads this
 app.get("/pump/status", (req, res) => {
-    res.json({ state: pumpState });
+    res.json({ motor: pumpState });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+// Optional: sensor data
+app.post("/sensor", (req, res) => {
+    console.log("Sensor:", req.body);
+    res.json({ ok: true });
+});
+
+// ---------------- START ----------------
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
 });
