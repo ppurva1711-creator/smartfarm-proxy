@@ -4,87 +4,59 @@ const axios = require("axios");
 const app = express();
 app.use(express.json());
 
-// 🔐 same secret as ESP/backend
 const SECRET = "abc123";
-
-// 🔥 Railway backend
 const MAIN_SERVER = "https://smartfarmapp-production.up.railway.app";
 
-// ================================
-// GET MOTOR STATE (ESP calls this)
-// ================================
+// GET MOTOR
 app.get("/motor", async(req, res) => {
     try {
         const { deviceId } = req.query;
 
-        const response = await axios.get(
-            `${MAIN_SERVER}/api/motor`, {
-                params: { deviceId, secret: SECRET },
-                timeout: 5000 // 🔥 ADD THIS
-            }
-        );
+        const response = await axios.get(`${MAIN_SERVER}/api/motor`, {
+            params: { deviceId, secret: SECRET },
+            timeout: 5000
+        });
 
         res.json(response.data);
-
     } catch (err) {
-        console.error(err.message);
+        console.error("GET ERROR:", err.message);
         res.status(500).json({ error: "Proxy error" });
     }
 });
 
-// ================================
-// POST MOTOR STATE
-// ================================
+// POST MOTOR
 app.post("/motor", async(req, res) => {
     try {
-        const body = {
-            ...req.body,
-            secret: SECRET // ✅ inject here
-        };
-
         const response = await axios.post(
-            `${MAIN_SERVER}/api/motor`, {
-                params: { deviceId, secret: SECRET },
-                timeout: 5000 // 🔥 ADD THIS
-            }
+            `${MAIN_SERVER}/api/motor`, {...req.body, secret: SECRET }, { timeout: 5000 }
         );
 
         res.json(response.data);
-
     } catch (err) {
-        console.error("ERROR:", err.response ? err.response.data || err.message : err.message);
+        console.error("POST ERROR:", err.message);
         res.status(500).json({ error: "Proxy error" });
     }
 });
 
-// ================================
-// SENSOR DATA
-// ================================
+// SENSOR
 app.post("/sensor", async(req, res) => {
     try {
-        const body = {
-            ...req.body,
-            secret: SECRET // ✅ inject here
-        };
-
         const response = await axios.post(
-            `${MAIN_SERVER}/api/sensor-data`,
-            body
+            `${MAIN_SERVER}/api/sensor-data`, {...req.body, secret: SECRET }, { timeout: 5000 }
         );
 
         res.json(response.data);
-
     } catch (err) {
-        console.error(err.message);
+        console.error("SENSOR ERROR:", err.message);
         res.status(500).json({ error: "Proxy error" });
     }
 });
 
-// ================================
 app.get("/", (req, res) => {
     res.send("Proxy Running ✅");
 });
 
-// ================================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Proxy started on port", PORT));
+app.listen(PORT, "0.0.0.0", () => {
+    console.log("Proxy started on port", PORT);
+});
