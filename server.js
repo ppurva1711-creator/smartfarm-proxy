@@ -12,10 +12,12 @@ app.get("/motor", async(req, res) => {
     try {
         const { deviceId } = req.query;
 
-        const response = await axios.get(`${MAIN_SERVER}/api/motor`, {
-            params: { deviceId, secret: SECRET },
-            timeout: 5000
-        });
+        const response = await axios.get(
+            `${MAIN_SERVER}/api/motor`, {
+                params: { deviceId, secret: SECRET },
+                timeout: 5000 // 🔥 ADD THIS
+            }
+        );
 
         res.json(response.data);
     } catch (err) {
@@ -28,7 +30,8 @@ app.get("/motor", async(req, res) => {
 app.post("/motor", async(req, res) => {
     try {
         const response = await axios.post(
-            `${MAIN_SERVER}/api/motor`, {...req.body, secret: SECRET }, { timeout: 5000 }
+            `${MAIN_SERVER}/api/motor`,
+            body, { timeout: 5000 } // 🔥 ADD
         );
 
         res.json(response.data);
@@ -56,5 +59,8 @@ app.get("/", (req, res) => {
     res.send("Proxy Running ✅");
 });
 
-const PORT = process.env.PORT;
-app.listen(PORT, () => console.log(`Proxy running on ${PORT}`));
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, "0.0.0.0", () => {
+    console.log("Proxy running on", PORT);
+});
