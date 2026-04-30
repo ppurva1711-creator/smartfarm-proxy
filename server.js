@@ -7,7 +7,9 @@ app.use(express.json());
 const SECRET = "abc123";
 const MAIN_SERVER = "https://smartfarmapp-production.up.railway.app";
 
+// =====================
 // GET MOTOR
+// =====================
 app.get("/motor", async(req, res) => {
     try {
         const { deviceId } = req.query;
@@ -15,7 +17,7 @@ app.get("/motor", async(req, res) => {
         const response = await axios.get(
             `${MAIN_SERVER}/api/motor`, {
                 params: { deviceId, secret: SECRET },
-                timeout: 5000 // 🔥 ADD THIS
+                timeout: 5000
             }
         );
 
@@ -26,12 +28,19 @@ app.get("/motor", async(req, res) => {
     }
 });
 
+// =====================
 // POST MOTOR
+// =====================
 app.post("/motor", async(req, res) => {
     try {
+        const body = {
+            ...req.body,
+            secret: SECRET
+        };
+
         const response = await axios.post(
             `${MAIN_SERVER}/api/motor`,
-            body, { timeout: 5000 } // 🔥 ADD
+            body, { timeout: 5000 }
         );
 
         res.json(response.data);
@@ -41,11 +50,19 @@ app.post("/motor", async(req, res) => {
     }
 });
 
+// =====================
 // SENSOR
+// =====================
 app.post("/sensor", async(req, res) => {
     try {
+        const body = {
+            ...req.body,
+            secret: SECRET
+        };
+
         const response = await axios.post(
-            `${MAIN_SERVER}/api/sensor-data`, {...req.body, secret: SECRET }, { timeout: 5000 }
+            `${MAIN_SERVER}/api/sensor-data`,
+            body, { timeout: 5000 }
         );
 
         res.json(response.data);
@@ -55,10 +72,12 @@ app.post("/sensor", async(req, res) => {
     }
 });
 
+// =====================
 app.get("/", (req, res) => {
     res.send("Proxy Running ✅");
 });
 
+// =====================
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, "0.0.0.0", () => {
