@@ -56,7 +56,5 @@ app.get("/", (req, res) => {
     res.send("Proxy Running ✅");
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () => {
-    console.log("Proxy started on port", PORT);
-});
+const PORT = process.env.PORT;
+app.listen(PORT, () => console.log(`Proxy running on ${PORT}`));
