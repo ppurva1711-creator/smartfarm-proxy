@@ -1,16 +1,16 @@
 const express = require("express");
 const axios = require("axios");
 
+const app = express(); // ✅ MUST come BEFORE app.use
 
-
-const app = express();
 app.use(express.json({ limit: "1mb" }));
+
 const SECRET = "abc123";
 const MAIN_SERVER = "https://smartfarmapp-production.up.railway.app";
 
-// =====================
+// ================================
 // GET MOTOR
-// =====================
+// ================================
 app.get("/motor", async(req, res) => {
     try {
         const { deviceId } = req.query;
@@ -33,9 +33,9 @@ app.get("/motor", async(req, res) => {
     }
 });
 
-// =====================
+// ================================
 // POST MOTOR
-// =====================
+// ================================
 app.post("/motor", async(req, res) => {
     try {
         const body = {
@@ -49,7 +49,6 @@ app.post("/motor", async(req, res) => {
         );
 
         res.json(response.data);
-
     } catch (err) {
         if (err.response && err.response.data) {
             console.error("FULL ERROR:", err.response.data);
@@ -59,9 +58,10 @@ app.post("/motor", async(req, res) => {
         res.status(500).json({ error: "Proxy error" });
     }
 });
-// =====================
+
+// ================================
 // SENSOR
-// =====================
+// ================================
 app.post("/sensor", async(req, res) => {
     try {
         const body = {
@@ -85,12 +85,12 @@ app.post("/sensor", async(req, res) => {
     }
 });
 
-// =====================
+// ================================
 app.get("/", (req, res) => {
     res.send("Proxy Running ✅");
 });
 
-// =====================
+// ================================
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, "0.0.0.0", () => {
