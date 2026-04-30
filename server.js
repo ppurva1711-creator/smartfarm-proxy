@@ -19,10 +19,8 @@ app.get("/motor", async(req, res) => {
 
         const response = await axios.get(
             `${MAIN_SERVER}/api/motor`, {
-                params: {
-                    deviceId,
-                    secret: SECRET // ✅ inject here
-                }
+                params: { deviceId, secret: SECRET },
+                timeout: 5000 // 🔥 ADD THIS
             }
         );
 
@@ -45,14 +43,16 @@ app.post("/motor", async(req, res) => {
         };
 
         const response = await axios.post(
-            `${MAIN_SERVER}/api/motor`,
-            body
+            `${MAIN_SERVER}/api/motor`, {
+                params: { deviceId, secret: SECRET },
+                timeout: 5000 // 🔥 ADD THIS
+            }
         );
 
         res.json(response.data);
 
     } catch (err) {
-        console.error(err.message);
+        console.error("ERROR:", err.response ? err.response.data || err.message : err.message);
         res.status(500).json({ error: "Proxy error" });
     }
 });
