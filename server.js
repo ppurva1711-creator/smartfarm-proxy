@@ -1,11 +1,10 @@
 const express = require("express");
 const axios = require("axios");
 
-app.use(express.json({ limit: "1mb" }));
+
 
 const app = express();
-app.use(express.json());
-
+app.use(express.json({ limit: "1mb" }));
 const SECRET = "abc123";
 const MAIN_SERVER = "https://smartfarmapp-production.up.railway.app";
 
